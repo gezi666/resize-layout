@@ -170,7 +170,8 @@ const createYHZGLChart = (id,chartData) => {
           selectedMode: 'single',
           radius: ['45%', '55%'],
           startAngle: 0,
-          color: ['#73d13d', '#ffec3d','#ff4d4f'],
+          //'#48ff00', '#ffe600' color: ['#73d13d', '#ffec3d','#ff4d4f'],
+          color: ['#48ff00', '#ffe600','#ff4d4f'],
 
           label: {
               normal: {
@@ -535,12 +536,15 @@ const createYHZGLChart = (id,chartData) => {
             text: '总数',
             subtext: total,
             textStyle: {
-                color: '#f2f2f2',
+                color: '#ffffff',
+                //字体加粗
+                fontWeight: 'bolder',
                 fontSize: 14,
             },
             subtextStyle: {
-                fontSize: 10,
-                color: ['#ff9d19'],
+                fontSize: 12,
+                color: ['#ffffff'],
+                fontWeight: 'bolder',
             },
             x: 'center',
             y: 'center',
@@ -574,13 +578,16 @@ const createYHZGLChart = (id,chartData) => {
                         formatter: function (info) { 
                             console.log(info)
                             //自定义的
-                            return "\t"+info.data.value + "\n ("+((parseInt(info.data.value)/total)*100).toFixed(0)+"%)"
+                            return info.data.value + "\n("+((parseInt(info.data.value)/total)*100).toFixed(0)+"%)"
                         },
                         textStyle: {
-                            fontSize: 8,
-
+                            fontSize: 12,
+                            color: '#ffffff',
+                            //字体加粗
+                            fontWeight: 'bolder'
                         },
-                        position: 'outside'
+                        //position: 'outside'
+                        position: 'inner'
                     },
                     emphasis: {
                         show: true
@@ -663,7 +670,7 @@ const createYHZGLChart = (id,chartData) => {
     const dom = document.getElementById(id);
     let total=parseInt(gctjData[0]['value'])+parseInt(gctjData[1]['value'])
     const option = {
-        color: ['#48ff00', '#ffe600'],
+        color: ['#48ff00', '#ffae00'],
         backgroundColor: '#ffffff00',
         title: {
             text: '总数',
@@ -673,8 +680,9 @@ const createYHZGLChart = (id,chartData) => {
                 fontSize: 14,
             },
             subtextStyle: {
-                fontSize: 10,
-                color: ['#ff9d19'],
+                fontSize: 12,
+                color: ['#ffffff'],
+                fontWeight: 'bolder',
             },
             x: 'center',
             y: 'center',
@@ -708,13 +716,14 @@ const createYHZGLChart = (id,chartData) => {
                         formatter: function (info) { 
                             console.log(info)
                             //自定义的
-                            return info.data.value + " \n("+((parseInt(info.data.value)/total)*100).toFixed(0)+"%)"
+                            return info.data.value + "\n("+((parseInt(info.data.value)/total)*100).toFixed(0)+"%)"
                         },
                         textStyle: {
-                            fontSize: 8,
-
+                            fontSize: 12,
+                            color: '#ffffff',
+                            fontWeight: 'bolder'
                         },
-                        position: 'outside'
+                        position: 'inner'
                     },
                     emphasis: {
                         show: true
@@ -1041,7 +1050,7 @@ const createRWGZChart = (id,taskData) => {
           selectedMode: 'single',
           radius: ['45%', '55%'],
           startAngle: 0,
-          color: ['#73d13d', '#ff4d4f'],
+          color: ['#48ff00', '#ff4d4f'],
 
           label: {
               normal: {
