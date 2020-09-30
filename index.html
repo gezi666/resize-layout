@@ -4,84 +4,449 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>resize</title>
+  <meta http-equiv="pragma" content="no-cache"> 
+  <meta http-equiv="Cache-Control" content="no-cache, must-revalidate"> 
+  <meta http-equiv="expires" content="0">
+  <title>大屏数据可视化</title>
+  <link rel="shortcut icon" href="#"/>
+  <link rel="stylesheet" href="src/css/style.css">
+  <link rel="stylesheet" href="src/lib/font-awesome-4.7.0/css/font-awesome.min.css"> 
+  <script src="src/js/jquery.js"></script>
+  <script src="src/lib/echarts/echarts.min.js"></script>
+  <script src="src/lib/echarts/echarts-liquidfill.min.js"></script>
 </head>
-<style>
-  *,*:before,*:after{
-    padding: 0;
-    margin: 0;
-    box-sizing: border-box;
-  }
-  body{
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    width: 100vw;
-    height: 100vh;
-    overflow: hidden;
-  }
-  header,footer{
-    flex: none;
-    width: 100%;
-    height: 60px;
-    background: lightgrey;
-  }
-  footer{
-    position: relative;
-    background: lightblue;
-  }
-  .main{
-    flex: auto;
-    display: flex;
-    align-items: stretch;
-  }
-  .sidebar{
-    flex: none;
-    width: 200px;
-    background: lightgoldenrodyellow;
-  }
-  .container{
-    position: relative;
-    flex: auto;
-    background: #e0bfc4;
-  }
-  .resize{
-    position: absolute;
-    z-index: 100;
-    touch-action: none;
-  }
-  .resize.horizontal{
-    top: 0;
-    bottom: 0;
-    left: 0;
-    width: 4px;
-    cursor: e-resize;
-  }
-  .resize.vertical{
-    left: 0;
-    right: 0;
-    top: 0;
-    height: 4px;
-    cursor: n-resize;
-  }
-</style>
 <body>
-  <header>头部</header>
+  <!-- 头部 -->
+  <header>
+  <!-- 标题 -->
+  <div class="title">
+     <span>朗盛数字化工作流系统</span>
+  </div>
+  <!-- 中间图片 -->
+  <div class="title_img">
+      <img src="src/img/title.png" alt="" style="display: inline-block; vertical-align: middle; max-width: 100%;max-height: 100%;">
+  </div>
+   <!-- 标题左侧 -->
+    <div class="title_left_img">
+      <img src="src/img/title_left.png" alt="" style="display: inline-block; vertical-align: middle; max-width: 50%;max-height: 100%;">
+    </div>
+ 
+  <!-- 标题右侧 -->
+  <div class="title_right_img">
+      <img src="src/img/title_right.png" alt="" style="display: inline-block; vertical-align: middle; max-width: 50%;max-height: 100%;">
+  </div>
+  <!-- 左侧gif -->
+  <div class="corrugation_left">
+      <img src="src/img/corrugation.gif" alt="" style="max-width: 50%;max-height: 100%; display: block; opacity: 1; transform: rotate(0deg);">
+  </div>
+  <!-- 右侧gif -->
+  <div class="corrugation_right">
+      <img src="src/img/corrugation.gif" alt="" style="max-width: 50%;max-height: 100%; display: block; opacity: 1; transform: rotate(0deg);">
+  </div>
+
+  <!-- 左侧入口 -->
+  <div class="left_top_href">
+      <a href="http://218.90.120.143:8081/lanxess/" target="_blank"><i class="fa fa-arrow-circle-left" aria-hidden="true"></i>&nbsp;工作模块</a>
+  </div>
+<!-- 右侧功能按钮 -->
+<div class="menu">
+  <span onclick="history.go(0) "> <i class="fa fa-refresh" aria-hidden="true"></i></span>
+  <span id="fullscreen" onclick="fullScreen()"><i class="fa fa-expand" aria-hidden="true"></i></span>
+</div>
+  </header>
+  <!-- 通知 -->
+  <section class="inform">
+    <div style="height: auto; width: auto; text-align: center; left: 23px; transform: rotate(0deg);">
+      <div><svg height="100%" width="100%"><text x="-945.241"><tspan fill="#ffffff" font-size="16" y="16">最新通知：<tspan id="infrom"></tspan></tspan><animate attributeName="x" dur="70000ms" keyTimes="0;0.5;0.5;1" values="1880;0;0;-1880" repeatCount="indefinite"></animate></text></svg></div>
+  </div>
+  </section>
+  <!-- 主界面 -->
   <section class="main">
-    <acticle class="sidebar">侧边栏</acticle>
-    <acticle class="container">内容区域
-      <div class="resize horizontal" onmousedown="mousedown('horizontal')"></div>
+    <!-- 左侧图表 -->
+    <acticle class="leftsidebar">
+        <!-- 天气预报 -->
+        <div id="weather-component">
+        </div>
+      <!-- 左上----无事故运营天数 -->
+      <div class="left_top_container">
+        
+        <div class="left_top_yyts">
+          已连续无事故运营&nbsp;<span id="YYTS"></span>&nbsp;天
+        </div>
+      </div>
+      <!-- 左中上---高危工艺-->
+      <div  class="left_middle_top_container">
+        <!-- SIS/ESD  -->
+        <div class="icon" id="danger_icon">
+          <img src="src/img/icon/danger.png" alt="">
+        </div>
+        <!-- 有毒可燃 -->
+        <div class="icon" id="gas_icon">
+          <img src="src/img/icon/gas.png" alt="" >
+       </div>
+        <!-- 储罐 -->
+        <div class="icon" id="tank_icon">
+            <img src="src/img/icon/tank.png" alt="" > 
+        </div>
+       <!-- 报警值 -->
+        <div>
+          <div class="alarm_tips"><span>SIS/ESD报警</span>&nbsp;<strong id="sisesd">0</strong>&nbsp;<span>处</span></div>
+          <div class="alarm_tips"><span>有毒可燃报警</span>&nbsp;<strong id="gas">0</strong>&nbsp;<span>处</span></div>
+          <div class="alarm_tips"><span>储罐报警</span>&nbsp;<strong id="tank">0</strong>&nbsp;<span>处</span></div>   
+       </div>
+      </div>
+       <!-- 左中下---SDSW统计-->
+       <div class="left_middle_bottom_container">
+           <!-- 小标题 -->
+          <div class="left_middle_bottom_title">
+            <span>SDSW统计</span> 
+          </div> 
+           <div id="SDSWTJ">
+               <div class="charts" >
+                    <div class="item_chart">
+                        <!-- SDSW -->
+                       <div id="SDSW"></div>
+                    </div>
+               </div>   
+               <div class="charts">
+                    <div class="item_chart" >
+                        <!-- 观察统计 -->
+                        <div id="GCTJ"></div>
+                    </div>
+               </div>   
+           </div>
+          <!-- 内容 -->
+          <div class="left_middle_bottom_img"> 
+              
+              <img src="src/img/left_middle.png" alt="" style="display: inline-block; vertical-align: middle;height: 134%; max-width: 100%;">
+            
+            </div>
+       </div>
+      <!-- 左下---风险研判轮询表 -->
+      <div class="tablebox"> 
+        <div class="tbl-header">
+            <table border="1" cellspacing="0" cellpadding="0">
+                <thead>
+                    <tr>
+                        <th width="15%">序号</th>
+                        <th width="55%">名称</th>
+                        <th width="30%">结果</th>
+                    </tr>
+                </thead>
+                <tbody style="opacity:0;"></tbody>
+            </table>
+        </div>
+        
+        <div class="tbl-body">
+            <table border="1" cellspacing="0" cellpadding="0">
+                <thead>
+                    <tr>
+                        <th width="15%">序号</th>
+                        <th width="55%">名称</th>
+                        <th width="30%">结果</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div> 
+         <!-- 无数据显示 -->
+        <div id="withoutData"> 
+            
+        </div>
+    </div>
+    
+    </acticle>
+    <!-- 中间--时钟、地图 -->
+    <acticle class="container">
+      <div class="resize horizontal" onmousedown="mousedown('horizontal')">
+       <!-- 时钟 -->
+          <div class="clock" id="clock">
+              <div class="flip down">
+                  <div class="digital front number0"></div>
+                  <div class="digital back number1"></div>
+              </div>
+              <div class="flip down">
+                  <div class="digital front number0"></div>
+                  <div class="digital back number1"></div>
+              </div>
+              <em>:</em>
+              <div class="flip down">
+                  <div class="digital front number0"></div>
+                  <div class="digital back number1"></div>
+              </div>
+              <div class="flip down">
+                  <div class="digital front number0"></div>
+                  <div class="digital back number1"></div>
+              </div>
+              <em>:</em>
+              <div class="flip down">
+                  <div class="digital front number0"></div>
+                  <div class="digital back number1"></div>
+              </div>
+              <div class="flip down">
+                  <div class="digital front number0"></div>
+                  <div class="digital back number1"></div>
+            </div>
+          </div>
+      </div>
+     <!-- 地图 -->
+    <iframe src="http://218.90.120.143:8103/#/bigScreen" frameborder="0" style="width: 100%; height: 100%;"></iframe> 
+    </acticle>
+      <!-- 右侧图表 -->
+    <acticle class="rightsidebar">
+      <!-- 右上----隐患整改、任务跟踪率 -->
+      <div class="right_top_container">
+        <!-- 隐患整改率 -->
+        <div class="charts">
+          <!-- 小标题 -->
+          <div class="little_title">隐患整改率</div>
+          <!-- 图表 -->
+          <div class="item_chart">
+            <div id="YHZGL">
+            </div>
+          </div>
+        </div>
+        <!-- 任务跟踪率 -->
+        <div class="charts">
+          <!-- 小标题 -->
+          <div class="little_title">任务跟踪率</div>
+          <!-- 图表 -->
+          <div class="item_chart">
+            <div id="RWGZ">
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- 右中----资格证书、当日巡检完成率 -->
+      <div class="right_middle_container">
+        <!-- 隐患整改率 -->
+        <div class="charts">
+          <!-- 小标题 -->
+          <div class="zgzs_title">资格证书</div>
+          <!-- 图表 -->
+          <div class="item_chart"> 
+            <div id="ZGZS"></div>  
+            <img src="src/img/right_middle.png" alt="" style="display: inline-block; vertical-align: middle; max-width: 100%;">
+        </div>
+        </div>
+        <!-- 任务跟踪率 -->
+        <div class="charts">
+          <!-- 小标题 -->
+          <div class="drxj_title">巡检完成率</div>
+          <!-- 图表 -->
+          <div class="item_chart">
+            <div id="XJWCL"></div>
+            <img src="src/img/right_middle.png" alt="" style="display: inline-block; vertical-align: middle; max-width: 100%;">
+          </div>
+        </div>
+      </div>
+      <!-- 右下----当前作业证、危废统计 -->
+      <div class="right_bottom_container">
+        <!-- 隐患整改率 -->
+        <div class="charts">
+          <!-- 小标题 -->
+          <div class="zyz_title">当前作业证</div>
+          <!-- 图表 -->
+          <div class="item_chart">
+            <div id="ZYZ">
+            </div>
+            <img src="src/img/right_middle.png" alt="" style="display: inline-block; vertical-align: middle; max-width: 100%;">
+          </div>
+        </div>
+        <!-- 任务跟踪率 -->
+        <div class="charts">
+          <!-- 小标题 -->
+          <div class="wftj_title">危废统计</div>
+          <!-- 图表 -->
+          <div class="item_chart">
+            <div id="WFTJ"></div>
+            <img src="src/img/right_middle.png" alt="" style="display: inline-block; vertical-align: middle; max-width: 100%;">
+          </div>
+        </div>
+      </div>
     </acticle>
   </section>
-  <footer>底部
+  <footer>
     <div class="resize vertical" onmousedown="mousedown('vertical')"></div>
   </footer>
 </body>
+<script src="src/js/chart.js"></script>
 <script>
+  //初始化
+        window.onload = function() {
+            var flip = document.getElementById('flip')
+            var backNode = document.querySelector('.back')
+            var frontNode = document.querySelector('.front')
+                // 当前数字
+            var count = 0
+                // 是否正在翻转（防止翻转未结束就进行下一次翻转）
+            var isFlipping = false
+           
+            /* 时钟代码 */
+            // 时钟翻牌
+            function Flipper(config) {
+                // 默认配置
+                this.config = {
+                        // 时钟模块的节点
+                        node: null,
+                        // 初始前牌文字
+                        frontText: 'number0',
+                        // 初始后牌文字
+                        backText: 'number1',
+                        // 翻转动画时间（毫秒，与翻转动画CSS 设置的animation-duration时间要一致）
+                        duration: 600
+                    }
+                    // 节点的原本class，与html对应，方便后面添加/删除新的class
+                this.nodeClass = {
+                        flip: 'flip',
+                        front: 'digital front',
+                        back: 'digital back'
+                    }
+                    // 覆盖默认配置
+                Object.assign(this.config, config)
+                    // 定位前后两个牌的DOM节点
+                this.frontNode = this.config.node.querySelector('.front')
+                this.backNode = this.config.node.querySelector('.back')
+                    // 是否处于翻牌动画过程中（防止动画未完成就进入下一次翻牌）
+                this.isFlipping = false
+                    // 初始化
+                this._init()
+            }
+            Flipper.prototype = {
+                constructor: Flipper,
+                // 初始化
+                _init: function() {
+                    // 设置初始牌面字符
+                    this._setFront(this.config.frontText)
+                    this._setBack(this.config.backText)
+                },
+                // 设置前牌文字
+                _setFront: function(className) {
+                    this.frontNode.setAttribute('class', this.nodeClass.front + ' ' + className)
+                },
+                // 设置后牌文字
+                _setBack: function(className) {
+                    this.backNode.setAttribute('class', this.nodeClass.back + ' ' + className)
+                },
+                _flip: function(type, front, back) {
+                    // 如果处于翻转中，则不执行
+                    if (this.isFlipping) {
+                        return false
+                    }
+                    // 设置翻转状态为true
+                    this.isFlipping = true
+                        // 设置前牌文字
+                    this._setFront(front)
+                        // 设置后牌文字
+                    this._setBack(back)
+                        // 根据传递过来的type设置翻转方向
+                    let flipClass = this.nodeClass.flip;
+                    if (type === 'down') {
+                        flipClass += ' down'
+                    } else {
+                        flipClass += ' up'
+                    }
+                    // 添加翻转方向和执行动画的class，执行翻转动画
+                    this.config.node.setAttribute('class', flipClass + ' go')
+                        // 根据设置的动画时间，在动画结束后，还原class并更新前牌文字
+                    setTimeout(() => {
+                        // 还原class
+                        this.config.node.setAttribute('class', flipClass)
+                            // 设置翻转状态为false
+                        this.isFlipping = false
+                            // 将前牌文字设置为当前新的数字，后牌因为被前牌挡住了，就不用设置了。
+                        this._setFront(back)
+                    }, this.config.duration)
+                },
+                // 下翻牌
+                flipDown: function(front, back) {
+                    this._flip('down', front, back)
+                },
+                // 上翻牌
+                flipUp: function(front, back) {
+                    this._flip('up', front, back)
+                }
+            }
 
+            // 定位时钟模块
+            let clock = document.getElementById('clock')
+                // 定位6个翻板
+            let flips = clock.querySelectorAll('.flip')
+                // 获取当前时间
+            let now = new Date()
+                // 格式化当前时间，例如现在是20:30:10，则输出"203010"字符串
+            let nowTimeStr = formatDate(now, 'hhiiss')
+                // 格式化下一秒的时间
+            let nextTimeStr = formatDate(new Date(now.getTime() + 1000), 'hhiiss')
+                // 定义牌板数组，用来存储6个Flipper翻板对象
+            let flipObjs = []
+            for (let i = 0; i < flips.length; i++) {
+                // 创建6个Flipper实例，并初始化
+                flipObjs.push(new Flipper({
+                    // 每个flipper实例按数组顺序与翻板DOM的顺序一一对应
+                    node: flips[i],
+                    // 按数组顺序取时间字符串对应位置的数字
+                    frontText: 'number' + nowTimeStr[i],
+                    backText: 'number' + nextTimeStr[i]
+                }))
+            }
+
+
+            // 开始计时
+            setInterval(function() {
+                // 获取当前时间
+                let now = new Date()
+                let nowTimeStr = formatDate(new Date(now.getTime() - 1000), 'hhiiss')
+                let nextTimeStr = formatDate(now, 'hhiiss')
+                for (let i = 0; i < flipObjs.length; i++) {
+                    if (nowTimeStr[i] === nextTimeStr[i]) {
+                        continue
+                    }
+                    flipObjs[i].flipDown('number' + nowTimeStr[i], 'number' + nextTimeStr[i])
+                }
+            }, 1000)
+
+            //正则格式化日期
+            function formatDate(date, dateFormat) {
+                /* 单独格式化年份，根据y的字符数量输出年份
+                 * 例如：yyyy => 2019
+                        yy => 19
+                        y => 9
+                 */
+                if (/(y+)/.test(dateFormat)) {
+                    dateFormat = dateFormat.replace(RegExp.$1, (date.getFullYear() + '').substr(4 - RegExp.$1.length));
+                }
+                // 格式化月、日、时、分、秒
+                let o = {
+                    'm+': date.getMonth() + 1,
+                    'd+': date.getDate(),
+                    'h+': date.getHours(),
+                    'i+': date.getMinutes(),
+                    's+': date.getSeconds()
+                };
+                for (let k in o) {
+                    if (new RegExp(`(${k})`).test(dateFormat)) {
+                        // 取出对应的值
+                        let str = o[k] + '';
+                        /* 根据设置的格式，输出对应的字符
+                         * 例如: 早上8时，hh => 08，h => 8
+                         * 但是，当数字>=10时，无论格式为一位还是多位，不做截取，这是与年份格式化不一致的地方
+                         * 例如: 下午15时，hh => 15, h => 15
+                         */
+                        dateFormat = dateFormat.replace(RegExp.$1, (RegExp.$1.length === 1) ? str : padLeftZero(str));
+                    }
+                }
+                return dateFormat;
+            };
+
+            //日期时间补零
+            function padLeftZero(str) {
+                return ('00' + str).substr(str.length);
+            }
+        }
+//放大缩小字体自适应
 function mousedown(flag){
   document.onmousemove = function(){
-    // console.log("flag",event,flag)
     if (flag === "horizontal"){
       if (event.x < 200 || event.x > 800) return
       var sidebar = document.querySelector(".sidebar")
@@ -100,5 +465,353 @@ document.onmouseup = function(){
   document.onmousemove = null
 }
 
+      //全屏
+      let fullscreen = false
+        const fullScreen = () => {
+            let element = document.documentElement;
+            let btn = document.getElementById('fullscreen');
+            // 判断是否已经是全屏
+            // 如果是全屏，退出
+            if (fullscreen) {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitCancelFullScreen) {
+                    document.webkitCancelFullScreen();
+                } else if (document.mozCancelFullScreen) {
+                    document.mozCancelFullScreen();
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen();
+                }
+                btn.innerHTML = '<i class="fa fa-expand" aria-hidden="true"></i>';
+            } else { // 否则，进入全屏
+                if (element.requestFullscreen) {
+                    element.requestFullscreen();
+                } else if (element.webkitRequestFullScreen) {
+                    element.webkitRequestFullScreen();
+                } else if (element.mozRequestFullScreen) {
+                    element.mozRequestFullScreen();
+                } else if (element.msRequestFullscreen) {
+                    // IE11
+                    element.msRequestFullscreen();
+                }
+                btn.innerHTML = '<i class="fa fa-compress" aria-hidden="true"></i>';
+            }
+            // 改变当前全屏状态
+            fullscreen = !fullscreen;
+        }
+
+
+        //运营天数、通知、重大危险源接口
+        $.ajax({
+            url: "http://218.90.120.143:8081/lanxess/YjdataServlet",
+            type: "get", 
+            dataType: "json",
+            success: function(data) {
+              //解析数组
+              let resData=data
+              for(let i=0,l=resData.length;i<l;i++){
+                    for(let key in resData[i]){
+                        if(key=='通知'){
+                            let INFROM = document.getElementById('infrom');
+                            INFROM.innerHTML = resData[0][key]
+                        }
+                        if(key=='SIS/ESD报警'){
+                            let SISESD = document.getElementById('sisesd');
+                            SISESD.innerHTML = resData[0][key]
+                        
+                        }
+                        if(key=='有毒可燃报警'){
+                            let GAS = document.getElementById('gas');
+                            GAS.innerHTML = resData[0][key]
+                            
+                        }
+                        if(key=='储罐报警'){
+                            let TANK = document.getElementById('tank');
+                            TANK.innerHTML = resData[0][key]
+                        }
+                        if(key=='起始日期'){
+                            //获取当天时间显示连续运营天数
+                            let today;
+                            let end;
+                            let days;
+                                today = new Date();	
+                                end = new Date(resData[0][key]);
+                                if(end < today){
+                                    days = parseInt(Math.abs(end - today) / 1000 / 60 / 60 / 24);
+                                }else{
+                                    days = '0';
+                                }	
+                            //显示天数
+                            let YYTS = document.getElementById('YYTS');
+                            YYTS.innerHTML = days
+                        }
+                    }
+                }
+              }
+        });
+        //let resData=[{"通知":"青青园中葵，朝露待日晞。阳春布德泽，万物生光辉。常恐秋节至，焜黄华叶衰。百川东到海，何时复西归？少壮不努力，老大徒伤悲。","SIS/ESD报警":"0","有毒可燃报警":"0","储罐报警":"0","起始日期":"2013-4-18"}]
+        //天气接口
+        $(function () {
+        // 1.初始化参数
+        WIDGET = {FID: 'RsRpMzj1NR'}
+        var css = "<link rel='stylesheet' href='https://apip.weatherdt.com/float/static/css/tqw_widget_float.css?v=0101'>";
+        var js = "<script src='https://apip.weatherdt.com/float/static/js/tqw_widget_float.js?v=0101'>";
+
+        // 2.把文件放到页面
+        $("head").append(css);
+        $("head").append(js);
+        
+        // 3.把目标放到页面，target为页面元素
+        var target = "#weather-component";
+        $(target).append("<div id='weather-float-he'></div>")
+        }) 
+
+     //初始化图表数据
+      //隐患整改
+      let chartData = []
+      //任务跟踪
+      let taskData = []
+      //人员证书
+      let cardData = []
+      //巡检完成率
+      let sum = 0
+      let complete = 0
+      //SDSW统计
+      let sdswData=[]
+      let gctjData=[]
+      //当前作业证
+      let ZYZtype = ["","","",""]
+      let ZYZcount = [0,0,0,0]
+      let ZYZtooltip = []
+      //危废统计
+      let category = []
+        // 获取数据接口1 添加图表内容
+          $.ajax({
+            url: "http://218.90.120.143:8081/lanxess/SydataServlet",
+            type: "get", 
+            dataType: "json",
+            success: function(data) {
+              //解析数组
+              for(let i=0,l=data.length;i<l;i++){
+                　　for(let key in data[i]){
+                     
+                    //判断名称  
+
+                    if(key=='隐患整改率'){
+                        for (let yhzglData in data[0][key]) {
+                            chartData.push({name: yhzglData,value: data[0][key][yhzglData]})
+                            
+                        }
+                        
+                        createYHZGLChart('YHZGL',chartData);
+                    }
+                    if(key=='任务跟踪'){
+                        for (let rwgzData in data[0][key]) {
+                            taskData.push({name: rwgzData,value: data[0][key][rwgzData]})
+                            
+                        }
+                        createRWGZChart('RWGZ',taskData);
+                    }
+                    if(key=='资格证书'){
+                        for (let cardDatas in data[0][key]) {
+                            cardData.push({name: cardDatas,value: data[0][key][cardDatas]})
+                            
+                        }
+                        console.log(cardData)
+                        createZGZSChart('ZGZS',cardData);
+                    }
+                    if(key=='当日巡检完成率'){
+                        for (let xjdata in data[0][key]) {
+                            if(xjdata=="已完成巡检"){
+                                 complete = data[0][key]["已完成巡检"]
+                            }else{
+                                 sum = data[0][key]["当日巡检总数"]
+                            }
+                        }
+                        createXJWCLChart('XJWCL',complete,sum);
+                    }
+                    if(key=='SDSW'){
+                        for (let datas in data[0][key]) {
+                            if(datas == "SD"){  
+                               sdswData.push({name: datas,value: data[0][key][datas]})
+                            }
+                            if(datas == "SW"){  
+                               sdswData.push({name: datas,value: data[0][key][datas]})
+                            }
+                            if(datas == "安全观察"){
+                               gctjData.push({name: datas,value: data[0][key][datas]})
+                            }
+                            if(datas == "危险观察"){
+                               gctjData.push({name: datas,value: data[0][key][datas]})
+                            }
+                        }  
+                        console.log(sdswData)
+                        console.log(gctjData)
+                        createSDSWChart('SDSW',sdswData);
+                        createGCTJChart('GCTJ',gctjData);
+                        // for (let sdswData in data[0][key]) {
+                        //     if(sdswData == "SD1"){
+                        //         SD.splice(5,1,parseInt(data[0][key]["SD1"]));
+                        //     }
+                        //     if(sdswData == "SD2"){
+                        //         SD.splice(4,1,parseInt(data[0][key]["SD2"]));
+                        //     }
+                        //     if(sdswData == "SD3"){
+                        //         SD.splice(3,1,parseInt(data[0][key]["SD3"]));
+                        //     }
+                        //     if(sdswData == "SD4"){
+                        //         SD.splice(2,1,parseInt(data[0][key]["SD4"]));
+                        //     }
+                        //     if(sdswData == "SD5"){
+                        //         SD.splice(1,1,parseInt(data[0][key]["SD5"]));
+                        //     }
+                        //     if(sdswData == "SD6"){
+                        //         SD.splice(0,1,parseInt(data[0][key]["SD6"]));
+                        //     }
+                        //     if(sdswData == "SW1"){
+                        //         SW.splice(5,1,parseInt(data[0][key]["SW1"]));
+                        //     }
+                        //     if(sdswData == "SW2"){
+                        //         SW.splice(4,1,parseInt(data[0][key]["SW2"]));
+                        //     }
+                        //     if(sdswData == "SW3"){
+                        //         SW.splice(3,1,parseInt(data[0][key]["SW3"]));
+                        //     }
+                        //     if(sdswData == "SW4"){
+                        //         SW.splice(2,1,parseInt(data[0][key]["SW4"]));
+                        //     }
+                        //     if(sdswData == "SW5"){
+                        //         SW.splice(1,1,parseInt(data[0][key]["SW5"]));
+                        //     }
+                        //     if(sdswData == "SW6"){
+                        //         SW.splice(0,1,parseInt(data[0][key]["SW6"]));
+                        //     }
+                        // }
+                        // for (let index = 0; index < 6; index++) {
+                        //      SDSWratio.push(SD[index])/parseInt(SW[index])
+                        // }
+                        // createSDSWChart('SDSW',SD,SW,SDSWratio);
+                    }
+                　　}
+                }
+            }
+        });
+
+         // 获取作业证数据接口 添加图表内容
+         $.ajax({
+            url: "http://218.90.120.143:8081/lanxess/SydataServlet2",
+            type: "get", 
+            dataType: "json",
+            success: function(data) {
+              //解析数组
+              for(let i=0,l=data.length;i<l;i++){
+                　　for(let key in data[i]){
+                    //判断名称  
+                    if(key=='当日作业证'){
+                        for (let zyzData in data[0][key]) {
+                            if(zyzData == "其他"){
+                                ZYZtype.splice(3,1,"其他");
+                                ZYZcount.splice(3,1,parseInt(data[0][key]["其他"]));
+                            }
+                            if(zyzData == "受限"){
+                                ZYZtype.splice(2,1,"受限");
+                                ZYZcount.splice(2,1,parseInt(data[0][key]["受限"]));
+                            }
+                            if(zyzData == "动火"){
+                                ZYZtype.splice(0,1,"动火");
+                                ZYZcount.splice(0,1,parseInt(data[0][key]["动火"]));
+                            }
+                            if(zyzData == "高处"){
+                                ZYZtype.splice(1,1,"高处");
+                                ZYZcount.splice(1,1,parseInt(data[0][key]["高处"]));                       
+                            }
+                        }
+                    }
+                    createZYZChart('ZYZ',ZYZtype,ZYZcount);
+                　　}
+                }
+            }
+        });
+
+        // 获取危废数据接口 添加图表内容
+        $.ajax({
+                    url: "http://218.90.120.143:8081/lanxess/SydataServlet3",
+                    type: "get", 
+                    dataType: "json",
+                    success: function(data) {
+                    //解析数组
+                     for(let i=0,l=data.length;i<l;i++){
+                            category.push({name: data[i]["label"],value: data[i]["value"]})
+                        } 
+                    createWFTJChart('WFTJ',category)
+                    }
+                });
+         //风险研判  表格轮询
+         let MyMarhq = '';
+        clearInterval(MyMarhq);
+        $('.tbl-body tbody').empty();
+        $('.tbl-header tbody').empty();
+        let str = '';
+        let Items = []
+        //获取接口数据、
+        $.ajax({
+            url: "http://218.90.120.143:8081/lanxess/FxypdataServlet",
+            type: "get", 
+            dataType: "json",
+            success: function(data) {
+              //解析数组
+            for (let key in data[0]) {
+                if(data[0][key]==""){
+                    data[0][key]="0"
+                }
+                if(data[0][key]==null){
+                    data[0][key]="无状态"
+                }
+              Items.push({name: key,result: data[0][key]})
+                }
+            if(Items.length == 0){
+                let none = document.getElementById('withoutData');
+                none.innerHTML = '暂无数据!'
+            }else{
+                $.each(Items,function (i, item) {
+            //拼接
+            str = '<tr>'+
+                '<td>'+(i+1)+'</td>'+
+                '<td>'+item.name+'</td>'+
+                '<td>'+item.result+'</td>'+
+                '</tr>'
+            $('.tbl-body tbody').append(str);
+            $('.tbl-header tbody').append(str);
+            });
+            if(Items.length > 6){
+            $('.tbl-body tbody').html($('.tbl-body tbody').html()+$('.tbl-body tbody').html());
+            $('.tbl-body').css('top', '0');
+            let tblTop = 0;
+            let speedhq = 50; // 数值越大越慢
+            let outerHeight = $('.tbl-body tbody').find("tr").outerHeight();
+            function Marqueehq(){
+                if(tblTop <= -outerHeight*Items.length){
+                    tblTop = 0;
+                } else {
+                    tblTop -= 1;
+                }
+                $('.tbl-body').css('top', tblTop+'px');
+            }
+            MyMarhq = setInterval(Marqueehq,speedhq);
+            // 鼠标移上去取消事件
+            $(".tbl-header tbody").hover(function (){
+                clearInterval(MyMarhq);
+              },function (){
+                clearInterval(MyMarhq);
+                MyMarhq = setInterval(Marqueehq,speedhq);
+                })
+               }
+            }
+        }
+    }); 
+    //定时刷新 10分钟
+    window.setTimeout(function(){
+            window.location.reload();
+        },6000000);
 </script>
 </html>
